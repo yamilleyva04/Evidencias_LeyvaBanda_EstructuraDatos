@@ -17,14 +17,14 @@ int main() {
         cout << "]" << endl;
     }
 
-    cout << "\n Matriz en filas:" << endl;
+    cout << "\nMatriz en filas:" << endl;
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             cout << matriz[i][j] << " ";
         }
     }
 
-    cout << "\n Matriz en columnas:" << endl;
+    cout << "\nMatriz en columnas:" << endl;
     for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 3; i++) {
             cout << matriz[i][j] << " ";
@@ -32,4 +32,5 @@ int main() {
     }
 
     return 0;
+
 }
