@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Tarea5 {
     public static void bubbleSort(int[] arr) {
         int n = arr.length;
@@ -17,7 +19,12 @@ public class Tarea5 {
     }
 
     public static void main(String[] args) {
-        int[] arr = {56, 32, 17, 99, 23, 10, 78};
+        Random rand = new Random();
+
+        int[] arr = new int[10];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = rand.nextInt(100) + 1;
+        }
 
         System.out.print("Arreglo original: ");
         for (int num : arr) System.out.print(num + " ");
@@ -29,3 +36,4 @@ public class Tarea5 {
         for (int num : arr) System.out.print(num + " ");
     }
 }
+
