@@ -13,9 +13,11 @@ function bubbleSort(arr) {
     return arr;
 }
 
-let arr = [56, 32, 17, 99, 23, 10, 78];
+let arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
+
 console.log("Arreglo original:", arr);
 
 bubbleSort(arr);
 
 console.log("Arreglo ordenado:", arr);
+
