@@ -18,7 +18,6 @@ void printArr(int arr[], int n) {
         cout << arr[i] << " ";
     cout << endl;
 }
-
 int main() {
     int arr[] = {70, 15, 2, 51, 60};
     int n = sizeof(arr) / sizeof(arr[0]);
@@ -33,3 +32,4 @@ int main() {
 
     return 0;
 }
+
