@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>  
 using namespace std;
 
 void bubbleSort(int arr[], int n) {
@@ -18,8 +20,14 @@ void bubbleSort(int arr[], int n) {
 }
 
 int main() {
-    int arr[] = {56, 32, 17, 99, 23, 10, 78};
-    int n = sizeof(arr) / sizeof(arr[0]);
+    srand(time(0)); /
+    
+    int n = 10; 
+    int arr[n];
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = rand() % 100 + 1;
+    }
 
     cout << "Arreglo original: ";
     for (int i = 0; i < n; i++) cout << arr[i] << " ";
@@ -33,3 +41,4 @@ int main() {
 
     return 0;
 }
+
