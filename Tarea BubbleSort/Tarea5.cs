@@ -19,7 +19,12 @@ class Program {
     }
 
     static void Main() {
-        int[] arr = {56, 32, 17, 99, 23, 10, 78};
+        Random rand = new Random();
+        
+        int[] arr = new int[10];
+        for (int i = 0; i < arr.Length; i++) {
+            arr[i] = rand.Next(1, 101);
+        }
 
         Console.Write("Arreglo original: ");
         foreach (int num in arr) Console.Write(num + " ");
@@ -31,3 +36,4 @@ class Program {
         foreach (int num in arr) Console.Write(num + " ");
     }
 }
+
