@@ -3,9 +3,7 @@ def main():
     par = 0
     imp = 0
     suma = 0
-
     print("Da 10 números:")
-
     for i in range(10):
         num = int(input(f"Número {i+1}: "))
         numeros.append(num)
@@ -15,9 +13,7 @@ def main():
             par += 1
         else:
             imp += 1
-
     prom = suma / 10
-
     print("\n--- Resultados ---")
     print("Números:", numeros)
     print("Pares:", par)
@@ -27,3 +23,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
