@@ -77,7 +77,6 @@ public class BatallaNaval {
             }
         }
     }
-
     static boolean puedeColocar(char[][] t, int r, int c, char o, int len) {
         if (r < 0 || r >= N || c < 0 || c >= N) return false;
         if (o == 'H') {
@@ -98,3 +97,4 @@ public class BatallaNaval {
         }
     }
 }
+
