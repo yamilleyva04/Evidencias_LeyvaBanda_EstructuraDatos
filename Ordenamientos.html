@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Proyecto de Ordenamiento (9 Algoritmos)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 20px; 
+            background-color: #f9f9f9;
+        }
+        h1, h3 { 
+            color: #333; 
+        }
+        #runButton {
+            font-size: 16px;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #runButton:disabled {
+            background-color: #ccc;
+        }
+        #scenarioSelector {
+            font-size: 16px;
+            padding: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        #results-container { 
+            margin-top: 20px; 
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-top: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #f4f4f4; 
+        }
+        tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+        #chart-container { 
+            width: 90%; 
+            max-width: 900px;
+            margin: 40px auto; 
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Proyecto de Ordenamiento (9 Algoritmos)</h1>
+    <p>Presiona el botón para ejecutar las 12 pruebas (4 tamaños x 3 pre-órdenes). 
+       <br><strong>Nota:</strong> Esto puede tardar varios minutos. Abre la consola (F12) para ver el progreso.
+    </p>
+    
+    <button id="runButton">Ejecutar Pruebas</button>
+    
+    <select id="scenarioSelector">
+        <option value="">Selecciona un escenario</option>
+    </select>
+
+    <div id="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <div id="results-container">
+    </div>
+
+    <script>
+        
+        function bubbleSort(arr) {
+            let n = arr.length;
+            for (let i = 0; i < n; i++) {
+                let intercambio = false;
+                for (let j = 0; j < n - i - 1; j++) {
+                    if (arr[j] > arr[j + 1]) {
+                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                        intercambio = true;
+                    }
+                }
+                if (!intercambio) break;
+            }
+            return arr;
+        }
+
+        function insertionSort(arr) {
+            let n = arr.length;
+            for (let i = 1; i < n; i++) {
+                let key = arr[i];
+                let j = i - 1;
+                while (j >= 0 && arr[j] > key) {
+                    arr[j + 1] = arr[j];
+                    j = j - 1;
+                }
+                arr[j + 1] = key;
+            }
+            return arr;
+        }
+
+        function selectionSort(arr) {
+            let n = arr.length;
+            for (let i = 0; i < n - 1; i++) {
+                let min_idx = i;
+                for (let j = i + 1; j < n; j++) {
+                    if (arr[j] < arr[min_idx]) {
+                        min_idx = j;
+                    }
+                }
+                [arr[min_idx], arr[i]] = [arr[i], arr[min_idx]];
+            }
+            return arr;
+        }
+
+        function mergeSort(arr) {
+            if (arr.length <= 1) {
+                return arr;
+            }
+            const mid = Math.floor(arr.length / 2);
+            const left = mergeSort(arr.slice(0, mid));
+            const right = mergeSort(arr.slice(mid));
+            return merge(left, right);
+        }
+
+        function merge(left, right) {
+            let resultArray = [], leftIndex = 0, rightIndex = 0;
+            while (leftIndex < left.length && rightIndex < right.length) {
+                if (left[leftIndex] < right[rightIndex]) {
+                    resultArray.push(left[leftIndex]);
+                    leftIndex++;
+                } else {
+                    resultArray.push(right[rightIndex]);
+                    rightIndex++;
+                }
+            }
+            return resultArray
+                .concat(left.slice(leftIndex))
+                .concat(right.slice(rightIndex));
+        }
+
+        function quickSort(arr) {
+            function sort(items, left, right) {
+                let index;
+                if (items.length > 1) {
+                    left = typeof left != "number" ? 0 : left;
+                    right = typeof right != "number" ? items.length - 1 : right;
+                    index = partition(items, left, right);
+                    if (left < index - 1) {
+                        sort(items, left, index - 1);
+                    }
+                    if (index < right) {
+                        sort(items, index, right);
+                    }
+                }
+                return items;
+            }
+            function partition(items, left, right) {
+                let pivot = items[Math.floor((right + left) / 2)],
+                    i = left,
+                    j = right;
+                while (i <= j) {
+                    while (items[i] < pivot) { i++; }
+                    while (items[j] > pivot) { j--; }
+                    if (i <= j) {
+                        [items[i], items[j]] = [items[j], items[i]];
+                        i++;
+                        j--;
+                    }
+                }
+                return i;
+            }
+            return sort([...arr], 0, arr.length - 1);
+        }
+
+        function heapSort(input) {
+            let arr = [...input]; 
+            let n = arr.length;
+            
+            for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+                heapify(arr, n, i);
+            }
+            
+            for (let i = n - 1; i > 0; i--) {
+                [arr[0], arr[i]] = [arr[i], arr[0]]; 
+                heapify(arr, i, 0); 
+            }
+            return arr;
+        }
+
+        function heapify(arr, n, i) {
+            let largest = i; 
+            let left = 2 * i + 1;
+            let right = 2 * i + 2;
+
+            if (left < n && arr[left] > arr[largest]) {
+                largest = left;
+            }
+            if (right < n && arr[right] > arr[largest]) {
+                largest = right;
+            }
+            if (largest != i) {
+                [arr[i], arr[largest]] = [arr[largest], arr[i]];
+                heapify(arr, n, largest);
+            }
+        }
+        
+        function shellSort(arr) {
+            let n = arr.length;
+            let gap = Math.floor(n / 2);
+            while (gap > 0) {
+                for (let i = gap; i < n; i++) {
+                    let temp = arr[i];
+                    let j = i;
+                    while (j >= gap && arr[j - gap] > temp) {
+                        arr[j] = arr[j - gap];
+                        j -= gap;
+                    }
+                    arr[j] = temp;
+                }
+                gap = Math.floor(gap / 2);
+            }
+            return arr;
+        }
+
+        function bucketSort(arr) {
+            if (arr.length === 0) {
+                return arr;
+            }
+
+            let minVal = arr[0];
+            let maxVal = arr[0];
+            for (let i = 1; i < arr.length; i++) {
+                if (arr[i] < minVal) {
+                    minVal = arr[i];
+                } else if (arr[i] > maxVal) {
+                    maxVal = arr[i];
+                }
+            }
+
+            let bucketCount = arr.length;
+            let buckets = new Array(bucketCount);
+            for (let i = 0; i < bucketCount; i++) {
+                buckets[i] = [];
+            }
+
+            let valRange = maxVal - minVal;
+            if (valRange === 0) {
+                return arr; 
+            }
+
+            for (let i = 0; i < arr.length; i++) {
+                let bucketIndex = Math.floor(((arr[i] - minVal) / valRange) * (bucketCount - 1));
+                buckets[bucketIndex].push(arr[i]);
+            }
+
+            let sortedArr = [];
+            for (let i = 0; i < bucketCount; i++) {
+                insertionSort(buckets[i]);
+                sortedArr.push(...buckets[i]);
+            }
+            
+            for(let i = 0; i < arr.length; i++) {
+                arr[i] = sortedArr[i];
+            }
+            return arr;
+        }
+
+        function countingSortForRadix(arr, exp) {
+            let n = arr.length;
+            let output = new Array(n).fill(0);
+            let count = new Array(10).fill(0);
+
+            for (let i = 0; i < n; i++) {
+                count[Math.floor(arr[i] / exp) % 10]++;
+            }
+
+            for (let i = 1; i < 10; i++) {
+                count[i] += count[i - 1];
+            }
+
+            for (let i = n - 1; i >= 0; i--) {
+                output[count[Math.floor(arr[i] / exp) % 10] - 1] = arr[i];
+                count[Math.floor(arr[i] / exp) % 10]--;
+            }
+
+            for (let i = 0; i < n; i++) {
+                arr[i] = output[i];
+            }
+        }
+
+        function radixSort(arr) {
+            if (arr.length === 0) return arr;
+            let max = Math.max(...arr);
+            for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+                countingSortForRadix(arr, exp);
+            }
+            return arr;
+        }
+        
+        function generarArreglo(tamano, tipo) {
+            let arr = [];
+            for (let i = 0; i < tamano; i++) {
+                arr.push(Math.floor(Math.random() * tamano * 10)); 
+            }
+            
+            if (tipo === "Ordenado") {
+                arr.sort((a, b) => a - b);
+            } else if (tipo === "Inversos") {
+                arr.sort((a, b) => b - a);
+            } else if (tipo === "Medianamente Ordenado") {
+                arr.sort((a, b) => a - b);
+                let swaps = Math.floor(tamano * 0.1);
+                for(let i = 0; i < swaps; i++) {
+                    let idx1 = Math.floor(Math.random() * tamano);
+                    let idx2 = Math.floor(Math.random() * tamano);
+                    [arr[idx1], arr[idx2]] = [arr[idx2], arr[idx1]];
+                }
+            }
+            return arr;
+        }
+        
+        const algoritmos = [
+            { nombre: "Bubble Sort", fn: bubbleSort },
+            { nombre: "Insertion Sort", fn: insertionSort },
+            { nombre: "Selection Sort", fn: selectionSort },
+            { nombre: "Merge Sort", fn: mergeSort },
+            { nombre: "Quick Sort", fn: quickSort },
+            { nombre: "Heap Sort", fn: heapSort },
+            { nombre: "Shell Sort", fn: shellSort },
+            { nombre: "Bucket Sort", fn: bucketSort },
+            { nombre: "Radix Sort", fn: radixSort }
+        ];
+        
+        const algoritmosN2 = ["Bubble Sort", "Insertion Sort", "Selection Sort"];
+        const TAMANO_LIMITE_N2 = 20000; 
+        
+        const ESCENARIOS = [
+            { tamano: 100, tipo: "Ordenado" },
+            { tamano: 100, tipo: "Medianamente Ordenado" },
+            { tamano: 100, tipo: "Inversos" },
+            { tamano: 1000, tipo: "Ordenado" },
+            { tamano: 1000, tipo: "Medianamente Ordenado" },
+            { tamano: 1000, tipo: "Inversos" },
+            { tamano: 10000, tipo: "Ordenado" },
+            { tamano: 10000, tipo: "Medianamente Ordenado" },
+            { tamano: 10000, tipo: "Inversos" },
+            { tamano: 100000, tipo: "Ordenado" },
+            { tamano: 100000, tipo: "Medianamente Ordenado" },
+            { tamano: 100000, tipo: "Inversos" },
+        ];
+        
+        let todosLosResultados = {}; 
+        let myChart; 
+
+        document.getElementById("runButton").addEventListener("click", async function() {
+            this.disabled = true;
+            this.textContent = "Ejecutando... (mira la consola F12)";
+            console.log("Iniciando pruebas...");
+            
+            const selector = document.getElementById("scenarioSelector");
+            const resultsDiv = document.getElementById("results-container");
+            resultsDiv.innerHTML = "";
+            selector.innerHTML = '<option value="">Selecciona un escenario</option>';
+            todosLosResultados = {};
+            if (myChart) myChart.destroy();
+
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            for (const escenario of ESCENARIOS) {
+                const { tamano, tipo } = escenario;
+                const key = `Tamaño: ${tamano}, Tipo: ${tipo}`;
+                console.log(`--- Ejecutando Escenario: ${key} ---`);
+                
+                let arrOriginal = generarArreglo(tamano, tipo);
+                let resultadosEscenario = [];
+                
+                for (const algo of algoritmos) {
+                    if (algoritmosN2.includes(algo.nombre) && tamano > TAMANO_LIMITE_N2) {
+                        console.log(`  Omitiendo ${algo.nombre} para ${tamano} elementos (demasiado lento).`);
+                        resultadosEscenario.push({
+                            metodo: algo.nombre,
+                            tiempo: Infinity 
+                        });
+                        continue;
+                    }
+
+                    let arrTest = [...arrOriginal];
+                    
+                    let t0 = performance.now();
+                    algo.fn(arrTest); 
+                    let t1 = performance.now();
+                    
+                    let tiempo = t1 - t0;
+                    console.log(`  ${algo.nombre}: ${tiempo.toFixed(4)} ms`);
+                    
+                    resultadosEscenario.push({
+                        metodo: algo.nombre,
+                        tiempo: tiempo
+                    });
+                }
+                
+                todosLosResultados[key] = resultadosEscenario;
+                let option = document.createElement("option");
+                option.value = key;
+                option.textContent = key;
+                selector.appendChild(option);
+            }
+            
+            console.log("Pruebas completadas.");
+            this.disabled = false;
+            this.textContent = "Ejecutar Pruebas";
+            selector.style.display = "block";
+            
+            if (ESCENARIOS.length > 0) {
+                const firstKey = `Tamaño: ${ESCENARIOS[0].tamano}, Tipo: ${ESCENARIOS[0].tipo}`;
+                selector.value = firstKey;
+                actualizarVista(firstKey);
+            }
+        });
+        
+        document.getElementById("scenarioSelector").addEventListener("change", function() {
+            actualizarVista(this.value);
+        });
+
+        function actualizarVista(escenarioKey) {
+            if (!escenarioKey || !todosLosResultados[escenarioKey]) {
+                if (myChart) myChart.destroy();
+                document.getElementById("results-container").innerHTML = "";
+                return;
+            }
+            
+            let resultados = todosLosResultados[escenarioKey];
+            
+            let resultadosOrdenados = [...resultados].sort((a, b) => a.tiempo - b.tiempo);
+            
+            const resultsDiv = document.getElementById("results-container");
+            let tableHTML = `<h3>Resumen: ${escenarioKey} (Mejor a Peor)</h3>`;
+            tableHTML += "<table><tr><th>Posición (Ranking)</th><th>Método</th><th>Tiempo (ms)</th></tr>";
+            
+            resultadosOrdenados.forEach((res, index) => {
+                let tiempoStr = res.tiempo === Infinity ? "N/A (Omitido por ser O(n^2))" : res.tiempo.toFixed(4);
+                tableHTML += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${res.metodo}</td>
+                    <td>${tiempoStr}</td>
+                </tr>`;
+            });
+            tableHTML += "</table>";
+            resultsDiv.innerHTML = tableHTML;
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            
+            let datosGrafico = resultados.filter(r => r.tiempo !== Infinity);
+            datosGrafico.sort((a, b) => a.metodo.localeCompare(b.metodo));
+
+            if (myChart) {
+                myChart.destroy(); 
+            }
+            
+            const colors = [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(199, 199, 199, 0.2)',
+                'rgba(128, 128, 128, 0.2)',
+                'rgba(255, 140, 0, 0.2)'
+            ];
+
+            const borders = [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(199, 199, 199, 1)',
+                'rgba(128, 128, 128, 1)',
+                'rgba(255, 140, 0, 1)'
+            ];
+            
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: datosGrafico.map(r => r.metodo),
+                    datasets: [{
+                        label: 'Tiempo de Ejecución (milisegundos)',
+                        data: datosGrafico.map(r => r.tiempo),
+                        backgroundColor: colors.slice(0, datosGrafico.length),
+                        borderColor: borders.slice(0, datosGrafico.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Tiempo (ms)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Comparativa de Rendimiento para: ${escenarioKey}`,
+                            font: { size: 18 }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
